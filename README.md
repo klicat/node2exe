@@ -1,18 +1,10 @@
 \# node2exe
 
-
-
 🚀 Easily convert your Node.js application into an executable with SEA (Single Executable Application).
-
-
 
 \*\*Supported on:\*\* Windows, macOS, Linux
 
-
-
 \## Installation
-
-
 
 ```bash
 
@@ -20,11 +12,7 @@ npm install --save-dev node2exe
 
 ```
 
-
-
 \## Usage
-
-
 
 \### Option 1: Direct command
 
@@ -36,27 +24,17 @@ npx node2exe
 
 ```
 
-
-
 \### Option 2: NPM script
 
 Add to your `package.json`:
 
 ```json
-
 {
-
-&nbsp; "scripts": {
-
-&nbsp;   "build:exe": "node2exe"
-
-&nbsp; }
-
+  "scripts": {
+    "build:exe": "node2exe"
+  }
 }
-
 ```
-
-
 
 Then run:
 
@@ -66,11 +44,7 @@ npm run build:exe
 
 ```
 
-
-
 \## Requirements
-
-
 
 \- \*\*Node.js 24+\*\* (with SEA support)
 
@@ -78,19 +52,13 @@ npm run build:exe
 
 \- A `package.json` file
 
-
-
 \## Output by platform
-
-
 
 \### Windows
 
 \- Generates: `app.exe` (Windows executable)
 
 \- Run: Double-click or `app.exe`
-
-
 
 \### macOS
 
@@ -100,19 +68,13 @@ npm run build:exe
 
 \- Note: Automatic code signing
 
-
-
 \### Linux
 
 \- Generates: `app` (Linux executable)
 
 \- Run: `./app` in terminal
 
-
-
 \## How it works
-
-
 
 1\. ✅ Automatically detects `app.js` or `index.js`
 
@@ -126,11 +88,7 @@ npm run build:exe
 
 6\. ✅ Cleans up temporary files
 
-
-
 \## Example
-
-
 
 ```bash
 
@@ -154,11 +112,7 @@ npx node2exe
 
 ```
 
-
-
 \## Generated files
-
-
 
 \- `app.exe` / `app` - Your final executable (ready to distribute)
 
@@ -166,11 +120,7 @@ npx node2exe
 
 \- `node\_modules/` - Contains postject and dependencies
 
-
-
 \## Notes
-
-
 
 \- The created executable includes all your code and Node.js
 
@@ -181,8 +131,3 @@ npx node2exe
 \- The script is written in pure JavaScript (cross-platform)
 
 \- Each platform generates its own executable
-
-
-
-
-
