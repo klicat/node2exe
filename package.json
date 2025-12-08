@@ -1,0 +1,32 @@
+{
+  "name": "@klicat/node2exe",
+  "version": "1.0.0",
+  "description": "Convertit une app Node.js en executable Windows avec SEA",
+  "bin": {
+    "node2exe": "bin/node2exe.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests yet\""
+  },
+  "keywords": [
+    "node",
+    "executable",
+    "windows",
+    "exe",
+    "sea",
+    "single-executable"
+  ],
+  "author": "klicat",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/klicat/node2exe.git"
+  },
+  "homepage": "https://github.com/klicat/node2exe",
+  "bugs": {
+    "url": "https://github.com/klicat/node2exe/issues"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}
