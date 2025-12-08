@@ -1,7 +1,7 @@
 {
-  "name": "@klicat/node2exe",
+  "name": "node2exe",
   "version": "1.0.0",
-  "description": "Convertit une app Node.js en executable Windows avec SEA",
+  "description": "Convertis facilement ton app Node.js en executable Windows avec SEA",
   "bin": {
     "node2exe": "bin/node2exe.js"
   },

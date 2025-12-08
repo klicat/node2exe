@@ -2,7 +2,11 @@
 
 
 
-🚀 Convertis facilement ton application Node.js en executable Windows (.exe) avec SEA (Single Executable Applications).
+🚀 Easily convert your Node.js application into an executable with SEA (Single Executable Application).
+
+
+
+\*\*Supported on:\*\* Windows, macOS, Linux
 
 
 
@@ -12,19 +16,19 @@
 
 ```bash
 
-npm install --save-dev @klicat/node2exe
+npm install --save-dev node2exe
 
 ```
 
 
 
-\## Utilisation
+\## Usage
 
 
 
-\### Option 1 : Commande directe
+\### Option 1: Direct command
 
-Dans ton projet, lance :
+In your project, run:
 
 ```bash
 
@@ -34,9 +38,9 @@ npx node2exe
 
 
 
-\### Option 2 : Script npm
+\### Option 2: NPM script
 
-Ajoute à ton `package.json` :
+Add to your `package.json`:
 
 ```json
 
@@ -54,7 +58,7 @@ Ajoute à ton `package.json` :
 
 
 
-Puis lance :
+Then run:
 
 ```bash
 
@@ -64,47 +68,67 @@ npm run build:exe
 
 
 
-\## Prérequis
+\## Requirements
 
 
 
-\- \*\*Node.js 24+\*\* (avec support SEA)
+\- \*\*Node.js 24+\*\* (with SEA support)
 
-\- \*\*Windows\*\*
+\- An `app.js` or `index.js` file in your project
 
-\- Un fichier `app.js` ou `index.js` dans ton projet
-
-\- Un fichier `package.json`
+\- A `package.json` file
 
 
 
-\## Comment ça marche
+\## Output by platform
 
 
 
-1\. ✅ Détecte automatiquement `app.js` ou `index.js`
+\### Windows
 
-2\. ✅ Installe `postject` s'il n'est pas déjà présent
+\- Generates: `app.exe` (Windows executable)
 
-3\. ✅ Crée `sea-config.json` automatiquement
-
-4\. ✅ Génère le blob SEA
-
-5\. ✅ Crée l'executable `app.exe`
-
-6\. ✅ Nettoie les fichiers temporaires
+\- Run: Double-click or `app.exe`
 
 
 
-\## Résultat
+\### macOS
+
+\- Generates: `app` (macOS executable)
+
+\- Run: `./app` in terminal
+
+\- Note: Automatic code signing
 
 
 
-Un fichier `app.exe` qui fonctionne \*\*sans avoir besoin de Node.js installé\*\* sur la machine !
+\### Linux
+
+\- Generates: `app` (Linux executable)
+
+\- Run: `./app` in terminal
 
 
 
-\## Exemple
+\## How it works
+
+
+
+1\. ✅ Automatically detects `app.js` or `index.js`
+
+2\. ✅ Installs `postject` if not already present
+
+3\. ✅ Creates `sea-config.json` automatically
+
+4\. ✅ Generates the SEA blob
+
+5\. ✅ Creates the executable for your platform
+
+6\. ✅ Cleans up temporary files
+
+
+
+\## Example
 
 
 
@@ -112,33 +136,35 @@ Un fichier `app.exe` qui fonctionne \*\*sans avoir besoin de Node.js installé\*
 
 \# Installation
 
-npm install --save-dev @klicat/node2exe
+npm install --save-dev node2exe
 
 
 
-\# Utilisation
+\# Usage
 
 npx node2exe
 
 
 
-\# Résultat
+\# Result
 
-\# ✅ app.exe créé!
+\# ✅ app.exe created! (Windows)
+
+\# ✅ app created! (macOS/Linux)
 
 ```
 
 
 
-\## Fichiers générés
+\## Generated files
 
 
 
-\- `app.exe` - Ton executable final (à distribuer)
+\- `app.exe` / `app` - Your final executable (ready to distribute)
 
-\- `sea-config.json` - Configuration SEA (optionnel après création)
+\- `sea-config.json` - SEA configuration (optional after creation)
 
-\- `node\_modules/` - Contient postject et dépendances
+\- `node\_modules/` - Contains postject and dependencies
 
 
 
@@ -146,29 +172,17 @@ npx node2exe
 
 
 
-\- L'executable créé inclut tout ton code et Node.js
+\- The created executable includes all your code and Node.js
 
-\- Aucune dépendance externe requise pour l'exécuter
+\- No external dependencies required to run
 
-\- Fonctionne sur Windows
+\- Typical size: 60-80 MB depending on your app
 
-\- Taille typique : 60-80 MB selon ton app
+\- The script is written in pure JavaScript (cross-platform)
 
-\- Le script est écrit en JavaScript pur (cross-platform)
-
-
-
-\## Licence
+\- Each platform generates its own executable
 
 
 
-MIT
 
-
-
-\## Support
-
-
-
-Problèmes ? Crée une issue sur : https://github.com/klicat/node2exe/issues
 
