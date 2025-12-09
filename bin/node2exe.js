@@ -5,10 +5,15 @@ const path = require('path');
 const os = require('os');
 const { execSync } = require('child_process');
 
-console.log('========================================');
-console.log('   Node.js to Executable Converter');
-console.log('   (SEA - Single Executable Application)');
-console.log('========================================\n');
+console.log('');
+console.log('  ╔════════════════════════════════════════════════════╗');
+console.log('  ║                                                    ║');
+console.log('  ║                🚀  node2exe  🚀                   ║');
+console.log('  ║          Convert Node.js to Executable             ║');
+console.log('  ║          (SEA - Single Executable App)             ║');
+console.log('  ║                                                    ║');
+console.log('  ╚════════════════════════════════════════════════════╝');
+console.log('');
 
 const projectDir = process.cwd();
 const platform = os.platform();
@@ -171,20 +176,30 @@ if (platform === 'darwin') {
 }
 
 // Success
-console.log('========================================');
-console.log('   ✅ Success!');
-console.log('========================================\n');
-console.log(`📁 File created: ${exeName}`);
-console.log('📦 package.json updated with postject');
+console.log('');
+console.log('  ╔════════════════════════════════════════════════════╗');
+console.log('  ║                                                    ║');
+console.log('  ║              ✅  Success!  ✅                     ║');
+console.log('  ║                                                    ║');
+console.log('  ╚════════════════════════════════════════════════════╝');
+console.log('');
+console.log(`  📁  File created: ${exeName}`);
+console.log('  📦  package.json updated with postject');
 
 if (platform === 'win32') {
-    console.log('🚀 Double-click app.exe to run\n');
+    console.log(`  🚀  Run: ${exeName}`);
 } else {
-    console.log(`🚀 Run: ./${exeName}\n`);
+    console.log(`  🚀  Run: ./${exeName}`);
 }
 
-console.log('Notes:');
-console.log('- You can now distribute the executable without Node.js');
-console.log('- sea-config.json file is not needed for execution');
-console.log('- Typical size: 60-80 MB depending on your app');
-console.log('- Use -V flag to include version in filename: node2exe -V');
+console.log('');
+console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('');
+console.log('  💡 Notes:');
+console.log('     • Distribute the executable without Node.js');
+console.log('     • sea-config.json not needed for execution');
+console.log('     • Typical size: 60-80 MB');
+console.log('     • Use -V flag for versioned filename');
+console.log('');
+console.log('  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('');
