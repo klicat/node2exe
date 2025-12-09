@@ -6,63 +6,70 @@ const os = require('os');
 const { execSync } = require('child_process');
 
 console.log('========================================');
-console.log('   Conversion Node.js en Executable');
+console.log('   Node.js to Executable Converter');
 console.log('   (SEA - Single Executable Application)');
 console.log('========================================\n');
 
 const projectDir = process.cwd();
 const platform = os.platform();
+const args = process.argv.slice(2);
+const includeVersion = args.includes('-V') || args.includes('--version');
 
-// Vérifier que c'est Windows, Mac ou Linux
+// Check platform support
 if (!['win32', 'darwin', 'linux'].includes(platform)) {
-    console.log('❌ Erreur : plateforme non supportée');
-    console.log(`   Plateforme détectée : ${platform}`);
-    console.log('   Supportée : Windows, macOS, Linux');
+    console.log('❌ Error: Unsupported platform');
+    console.log(`   Detected platform: ${platform}`);
+    console.log('   Supported: Windows, macOS, Linux');
     process.exit(1);
 }
 
-console.log(`ℹ Plateforme détectée : ${platform === 'win32' ? 'Windows' : platform === 'darwin' ? 'macOS' : 'Linux'}\n`);
+console.log(`ℹ Detected platform: ${platform === 'win32' ? 'Windows' : platform === 'darwin' ? 'macOS' : 'Linux'}\n`);
 
-// Déterminer le fichier d'entrée
-let entryFile;
-if (fs.existsSync(path.join(projectDir, 'app.js'))) {
-    entryFile = 'app.js';
-    console.log('✓ app.js trouvé');
-} else if (fs.existsSync(path.join(projectDir, 'index.js'))) {
-    entryFile = 'index.js';
-    console.log('✓ index.js trouvé');
-} else {
-    console.log('❌ Erreur : app.js ou index.js introuvable');
+// Check package.json
+const packageJsonPath = path.join(projectDir, 'package.json');
+if (!fs.existsSync(packageJsonPath)) {
+    console.log('❌ Error: package.json not found');
     process.exit(1);
 }
 
-// Vérifier package.json
-if (!fs.existsSync(path.join(projectDir, 'package.json'))) {
-    console.log('❌ Erreur : package.json introuvable');
+let packageJson;
+try {
+    packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+} catch (err) {
+    console.log('❌ Error: Invalid package.json');
     process.exit(1);
 }
-console.log('✓ package.json trouvé\n');
 
-// Vérifier/installer postject
-console.log('Vérification de postject...');
+console.log('✓ package.json found');
+
+// Get entry file from package.json main field
+let entryFile = packageJson.main || 'index.js';
+if (!fs.existsSync(path.join(projectDir, entryFile))) {
+    console.log(`❌ Error: Main entry file "${entryFile}" not found`);
+    process.exit(1);
+}
+console.log(`✓ Entry file found: ${entryFile}\n`);
+
+// Check/install postject
+console.log('Checking postject...');
 try {
     require.resolve('postject');
-    console.log('✓ postject présent\n');
+    console.log('✓ postject present\n');
 } catch (e) {
-    console.log('Installation de postject...');
+    console.log('Installing postject...');
     try {
         execSync('npm install --save-dev postject', { cwd: projectDir, stdio: 'inherit' });
-        console.log('✓ postject installé\n');
+        console.log('✓ postject installed\n');
     } catch (err) {
-        console.log('❌ Erreur : postject non installé');
+        console.log('❌ Error: postject installation failed');
         process.exit(1);
     }
 }
 
-// Créer sea-config.json
+// Create sea-config.json
 const seaConfigPath = path.join(projectDir, 'sea-config.json');
 if (!fs.existsSync(seaConfigPath)) {
-    console.log('Création de sea-config.json...');
+    console.log('Creating sea-config.json...');
     const seaConfig = {
         main: entryFile,
         output: 'sea-prep.blob',
@@ -70,53 +77,59 @@ if (!fs.existsSync(seaConfigPath)) {
     };
     fs.writeFileSync(seaConfigPath, JSON.stringify(seaConfig, null, 2));
 }
-console.log('✓ sea-config.json présent\n');
+console.log('✓ sea-config.json present\n');
 
-// Déterminer le nom du fichier de sortie
-const exeName = platform === 'win32' ? 'app.exe' : 'app';
+// Determine output filename
+let exeName = platform === 'win32' ? 'app.exe' : 'app';
+if (includeVersion && packageJson.version) {
+    const version = packageJson.version;
+    exeName = platform === 'win32' 
+        ? `app-${version}.exe` 
+        : `app-${version}`;
+}
 const outputPath = path.join(projectDir, exeName);
 
-// Étape 1 : Générer le blob SEA
-console.log('[1/5] Génération du blob SEA...');
+// Step 1: Generate SEA blob
+console.log('[1/5] Generating SEA blob...');
 try {
     execSync(`node --experimental-sea-config sea-config.json`, { 
         cwd: projectDir,
         stdio: 'inherit'
     });
-    console.log('✓ Blob SEA généré : sea-prep.blob\n');
+    console.log('✓ SEA blob generated: sea-prep.blob\n');
 } catch (err) {
-    console.log('❌ Erreur : blob non généré');
+    console.log('❌ Error: Failed to generate blob');
     process.exit(1);
 }
 
-// Étape 2 : Copier Node
-console.log(`[2/5] Copie du binaire Node.js...`);
+// Step 2: Copy Node binary
+console.log(`[2/5] Copying Node.js binary...`);
 try {
     const nodePath = process.execPath;
     fs.copyFileSync(nodePath, outputPath);
-    console.log(`✓ ${exeName} créé\n`);
+    console.log(`✓ ${exeName} created\n`);
 } catch (err) {
-    console.log('❌ Erreur : copie échouée');
+    console.log('❌ Error: Copy failed');
     console.log(err.message);
     process.exit(1);
 }
 
-// Étape 3 : Retirer la signature (macOS uniquement)
+// Step 3: Remove signature (macOS only)
 if (platform === 'darwin') {
-    console.log('[3/5] Retrait de la signature (macOS)...');
+    console.log('[3/5] Removing signature (macOS)...');
     try {
         execSync(`codesign --remove-signature ${exeName}`, { cwd: projectDir });
-        console.log('✓ Signature retirée\n');
+        console.log('✓ Signature removed\n');
     } catch (err) {
-        console.log('⚠ Avertissement : impossible de retirer la signature');
-        console.log('  (continuons quand même)\n');
+        console.log('⚠ Warning: Could not remove signature');
+        console.log('  (continuing anyway)\n');
     }
 } else {
-    console.log('[3/5] Étape signature : non applicable\n');
+    console.log('[3/5] Signature step: Not applicable\n');
 }
 
-// Étape 4 : Injecter le blob avec postject
-console.log('[4/5] Injection du blob SEA...');
+// Step 4: Inject blob with postject
+console.log('[4/5] Injecting SEA blob...');
 try {
     let injectCmd;
     if (platform === 'win32') {
@@ -128,49 +141,50 @@ try {
     }
     
     execSync(injectCmd, { cwd: projectDir, stdio: 'inherit' });
-    console.log('✓ Blob injecté avec succès\n');
+    console.log('✓ Blob injected successfully\n');
 } catch (err) {
-    console.log('❌ Erreur : injection échouée');
+    console.log('❌ Error: Injection failed');
     process.exit(1);
 }
 
-// Étape 5 : Signer (macOS uniquement)
+// Step 5: Sign (macOS only) or cleanup
 if (platform === 'darwin') {
-    console.log('[5/5] Signature du binaire (macOS)...');
+    console.log('[5/5] Signing binary (macOS)...');
     try {
         execSync(`codesign --sign - ${exeName}`, { cwd: projectDir });
-        console.log('✓ Binaire signé\n');
+        console.log('✓ Binary signed\n');
     } catch (err) {
-        console.log('⚠ Avertissement : signature échouée');
-        console.log('  (le binaire peut quand même fonctionner)\n');
+        console.log('⚠ Warning: Signing failed');
+        console.log('  (binary can still run)\n');
     }
 } else {
-    console.log('[5/5] Nettoyage...');
+    console.log('[5/5] Cleanup...');
     try {
         const blobPath = path.join(projectDir, 'sea-prep.blob');
         if (fs.existsSync(blobPath)) {
             fs.unlinkSync(blobPath);
         }
-        console.log('✓ Nettoyage fait\n');
+        console.log('✓ Cleanup done\n');
     } catch (err) {
-        console.log('⚠ Avertissement : nettoyage partiel');
+        console.log('⚠ Warning: Partial cleanup');
     }
 }
 
-// Succès
+// Success
 console.log('========================================');
-console.log('   ✅ Succès !');
+console.log('   ✅ Success!');
 console.log('========================================\n');
-console.log(`📁 Fichier créé : ${exeName}`);
-console.log('📦 package.json mis à jour avec postject');
+console.log(`📁 File created: ${exeName}`);
+console.log('📦 package.json updated with postject');
 
 if (platform === 'win32') {
-    console.log('🚀 Double-cliquez sur app.exe pour l\'exécuter\n');
+    console.log('🚀 Double-click app.exe to run\n');
 } else {
-    console.log(`🚀 Lancez : ./${exeName}\n`);
+    console.log(`🚀 Run: ./${exeName}\n`);
 }
 
 console.log('Notes:');
-console.log('- Vous pouvez maintenant distribuer le fichier sans Node.js');
-console.log('- Les fichiers sea-config.json ne sont pas nécessaires pour l\'exécution');
-console.log('- Taille typique : 60-80 MB selon votre app');
+console.log('- You can now distribute the executable without Node.js');
+console.log('- sea-config.json file is not needed for execution');
+console.log('- Typical size: 60-80 MB depending on your app');
+console.log('- Use -V flag to include version in filename: node2exe -V');

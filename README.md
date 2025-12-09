@@ -1,33 +1,31 @@
-\# node2exe
+# node2exe
 
 🚀 Easily convert your Node.js application into an executable with SEA (Single Executable Application).
 
-\*\*Supported on:\*\* Windows, macOS, Linux
+**Supported on:** Windows, macOS, Linux
 
-\## Installation
+## Installation
 
 ```bash
-
 npm install --save-dev node2exe
-
 ```
 
-\## Usage
+## Usage
 
-\### Option 1: Direct command
-
+### Option 1: Direct command
 In your project, run:
-
 ```bash
-
 npx node2exe
-
 ```
 
-\### Option 2: NPM script
+### Option 2: With version in filename
+```bash
+npx node2exe -V
+```
+This generates `app-1.0.0.exe` (or `app-1.0.0` on macOS/Linux) based on your package.json version.
 
+### Option 3: NPM script
 Add to your `package.json`:
-
 ```json
 {
   "scripts": {
@@ -37,97 +35,106 @@ Add to your `package.json`:
 ```
 
 Then run:
-
 ```bash
-
 npm run build:exe
-
+npm run build:exe -- -V  # with version
 ```
 
-\## Requirements
+## Requirements
 
-\- \*\*Node.js 24+\*\* (with SEA support)
+- **Node.js 24+** (with SEA support)
+- An `app.js`, `index.js`, or file specified in `package.json` `main` field
+- A `package.json` file
 
-\- An `app.js` or `index.js` file in your project
+## Output by platform
 
-\- A `package.json` file
+### Windows
+- Generates: `app.exe` (Windows executable)
+- Run: Double-click or `app.exe`
 
-\## Output by platform
+### macOS
+- Generates: `app` (macOS executable)
+- Run: `./app` in terminal
+- Note: Automatic code signing
 
-\### Windows
+### Linux
+- Generates: `app` (Linux executable)
+- Run: `./app` in terminal
 
-\- Generates: `app.exe` (Windows executable)
+## How it works
 
-\- Run: Double-click or `app.exe`
+1. ✅ Reads entry point from `package.json` `main` field
+2. ✅ Installs `postject` if not already present
+3. ✅ Creates `sea-config.json` automatically
+4. ✅ Generates the SEA blob
+5. ✅ Creates the executable for your platform
+6. ✅ Cleans up temporary files
 
-\### macOS
-
-\- Generates: `app` (macOS executable)
-
-\- Run: `./app` in terminal
-
-\- Note: Automatic code signing
-
-\### Linux
-
-\- Generates: `app` (Linux executable)
-
-\- Run: `./app` in terminal
-
-\## How it works
-
-1\. ✅ Automatically detects `app.js` or `index.js`
-
-2\. ✅ Installs `postject` if not already present
-
-3\. ✅ Creates `sea-config.json` automatically
-
-4\. ✅ Generates the SEA blob
-
-5\. ✅ Creates the executable for your platform
-
-6\. ✅ Cleans up temporary files
-
-\## Example
+## Example
 
 ```bash
-
-\# Installation
-
+# Installation
 npm install --save-dev node2exe
 
-
-
-\# Usage
-
+# Usage
 npx node2exe
 
-
-
-\# Result
-
-\# ✅ app.exe created! (Windows)
-
-\# ✅ app created! (macOS/Linux)
-
+# Result
+# ✅ app.exe created! (Windows)
+# ✅ app created! (macOS/Linux)
 ```
 
-\## Generated files
+## Generated files
 
-\- `app.exe` / `app` - Your final executable (ready to distribute)
+- `app.exe` / `app` - Your final executable (ready to distribute)
+- `sea-config.json` - SEA configuration (optional after creation)
+- `node_modules/` - Contains postject and dependencies
 
-\- `sea-config.json` - SEA configuration (optional after creation)
+## Important: CommonJS (require) vs ES Modules (import)
 
-\- `node\_modules/` - Contains postject and dependencies
+⚠️ **SEA (Single Executable Applications) only supports CommonJS modules** (`require`), not ES Modules (`import`).
 
-\## Notes
+**Official documentation:** https://nodejs.org/api/single-executable-applications.html
 
-\- The created executable includes all your code and Node.js
+> "The single executable application feature currently only supports running a single embedded script using the CommonJS module system."
 
-\- No external dependencies required to run
+### ✅ Works (CommonJS)
+```javascript
+const express = require('express');
+const fs = require('fs');
 
-\- Typical size: 60-80 MB depending on your app
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+```
 
-\- The script is written in pure JavaScript (cross-platform)
+### ❌ Does NOT work (ES Modules)
+```javascript
+import express from 'express';  // ❌ Not supported
+import fs from 'fs';             // ❌ Not supported
+```
 
-\- Each platform generates its own executable
+### Why?
+Node.js SEA currently only supports the CommonJS module system. ES Module support (`import/export`) is not yet available in SEA due to technical limitations.
+
+### Solution
+If your project uses ES Modules, you need to:
+1. Convert your code to CommonJS (`require`)
+2. Or use a bundler like `esbuild` to bundle your ES Modules into a single CommonJS file before building the executable
+
+Example with esbuild:
+```bash
+npx esbuild app.js --bundle --platform=node --outfile=bundle.js
+# Then update package.json main to "bundle.js"
+npx node2exe
+```
+
+## Notes
+
+- The created executable includes all your code and Node.js
+- No external dependencies required to run
+- Typical size: 60-80 MB depending on your app
+- The script is written in pure JavaScript (cross-platform)
+- Each platform generates its own executable
+- Use the `-V` flag to include version in the filename
+
