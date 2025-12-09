@@ -8,7 +8,7 @@ const { execSync } = require('child_process');
 console.log('');
 console.log('  ╔════════════════════════════════════════════════════╗');
 console.log('  ║                                                    ║');
-console.log('  ║                🚀  node2exe  🚀                   ║');
+console.log('  ║                🚀  node2exe  🚀                    ║');
 console.log('  ║          Convert Node.js to Executable             ║');
 console.log('  ║          (SEA - Single Executable App)             ║');
 console.log('  ║                                                    ║');
@@ -135,6 +135,7 @@ if (platform === 'darwin') {
 
 // Step 4: Inject blob with postject
 console.log('[4/5] Injecting SEA blob...');
+console.log('⏳ This may take 30-60 seconds, please wait...\n');
 try {
     let injectCmd;
     if (platform === 'win32') {
@@ -179,7 +180,7 @@ if (platform === 'darwin') {
 console.log('');
 console.log('  ╔════════════════════════════════════════════════════╗');
 console.log('  ║                                                    ║');
-console.log('  ║              ✅  Success!  ✅                     ║');
+console.log('  ║              ✅  Success!  ✅                      ║');
 console.log('  ║                                                    ║');
 console.log('  ╚════════════════════════════════════════════════════╝');
 console.log('');

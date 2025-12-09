@@ -138,3 +138,31 @@ npx node2exe
 - Each platform generates its own executable
 - Use the `-V` flag to include version in the filename
 
+## Windows: "The signature seems corrupted" warning
+
+When building on Windows, you may see this warning during the injection step:
+
+```
+warning: The signature seems corrupted!
+```
+
+**This is completely normal and harmless!** 
+
+Here's why it happens:
+- Windows signs all `.exe` files with a digital signature for security
+- When `postject` injects the SEA blob, it modifies the binary structure
+- This breaks the original Windows signature (but the file still works perfectly)
+- The warning is just informational and can be safely ignored
+
+**The executable will work perfectly fine without the signature.** If you want to sign it with a code signing certificate, you can use `signtool` from the Windows SDK (requires a valid certificate).
+
+## Injection takes 30-60 seconds
+
+⏳ **Important:** The injection step (step 4/5) can take **30-60 seconds** depending on your disk speed.
+
+This is because `postject` needs to:
+- Read the entire Node.js binary (50-80 MB)
+- Inject the SEA blob into it
+- Write the complete file back to disk
+
+**This is normal and expected.** Just wait for the process to complete. Do not interrupt it during this step!
