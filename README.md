@@ -166,3 +166,38 @@ This is because `postject` needs to:
 - Write the complete file back to disk
 
 **This is normal and expected.** Just wait for the process to complete. Do not interrupt it during this step!
+
+## Automatic Bundling with Dependencies
+
+When you have npm packages in your `node_modules`, node2exe automatically bundles them into the executable using esbuild. This works great for most packages!
+
+```bash
+npm install colors
+npx node2exe
+# This automatically bundles 'colors' into the executable
+```
+
+### ⚠️ Important: Assets and Data Files
+
+Some npm packages require external data files (like databases or configuration files). These **cannot be automatically bundled** into the executable because:
+
+1. **SEA doesn't support file system access** for bundled assets by default
+2. **Data files are not code** - esbuild bundler only handles JavaScript
+3. **Path resolution fails** - packages looking for files on disk won't find them in the executable
+
+**Examples of packages with data files:**
+- `geoip-lite` - requires `.dat` files
+- SQLite databases - `.db` files  
+- Font files, images, config files
+
+**Solutions:**
+1. **Use online APIs instead** - Replace local data with API calls (recommended) ✅
+   ```javascript
+   // Instead of: const geoip = require('geoip-lite');
+   // Use: fetch('https://ip-api.com/json/' + ip)
+   ```
+
+2. **Use web services** - Move data-heavy operations to cloud services
+
+3. **Manually add assets** - Edit `sea-config.json` to include assets (advanced, complex)
+
