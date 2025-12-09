@@ -1,6 +1,6 @@
 {
   "name": "node2exe",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Easily convert your Node.js application into an executable with SEA (Single Executable Application)",
   "bin": {
     "node2exe": "bin/node2exe.js"
