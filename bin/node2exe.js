@@ -84,13 +84,14 @@ if (!fs.existsSync(seaConfigPath)) {
 }
 console.log('✓ sea-config.json present\n');
 
-// Determine output filename
-let exeName = platform === 'win32' ? 'app.exe' : 'app';
+// Determine output filename based on main entry file name
+let baseName = path.basename(entryFile, path.extname(entryFile));
+let exeName = platform === 'win32' ? `${baseName}.exe` : baseName;
 if (includeVersion && packageJson.version) {
     const version = packageJson.version;
     exeName = platform === 'win32' 
-        ? `app-${version}.exe` 
-        : `app-${version}`;
+        ? `${baseName}-${version}.exe` 
+        : `${baseName}-${version}`;
 }
 const outputPath = path.join(projectDir, exeName);
 
