@@ -137,11 +137,19 @@ console.log('Hello'.blue);
 
 **Your code:**
 ```javascript
+import express from 'express';
 import colors from 'colors';
-import https from 'https';
+
+const app = express();
+const PORT = 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello World');
+  console.log(colors.blue('→ Request received on /'));
+  res.send('Hello World from Express!');
+});
+
+app.listen(PORT, () => {
+  console.log(colors.green(`✓ Server running on http://localhost:${PORT}`));
 });
 ```
 
@@ -157,11 +165,19 @@ app.get('/', (req, res) => {
 
 **Your code:**
 ```javascript
+const express = require('express');
 const colors = require('colors');
-const https = require('https');
+
+const app = express();
+const PORT = 3000;
 
 app.get('/', (req, res) => {
-  res.send('Hello World');
+  console.log(colors.blue('→ Request received on /'));
+  res.send('Hello World from Express!');
+});
+
+app.listen(PORT, () => {
+  console.log(colors.green(`✓ Server running on http://localhost:${PORT}`));
 });
 ```
 
@@ -289,4 +305,3 @@ Some npm packages require external data files (like databases or configuration f
 2. **Use web services** - Move data-heavy operations to cloud services
 
 3. **Manually add assets** - Edit `sea-config.json` to include assets (advanced, complex)
-
