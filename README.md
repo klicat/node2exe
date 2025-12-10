@@ -4,6 +4,10 @@
 
 **Supported on:** Windows, macOS, Linux
 
+Made with ❤️ by [Klicat](https://klicat.com) - France
+
+---
+
 ## Installation
 
 ```bash
@@ -43,8 +47,10 @@ npm run build:exe -- -V  # with version
 ## Requirements
 
 - **Node.js 24+** (with SEA support)
-- An `app.js`, `index.js`, or file specified in `package.json` `main` field
+- A file specified in `package.json` `main` field (e.g., `server.js`, `app.js`, `index.js`)
 - A `package.json` file
+
+**Note:** The executable name is based on the `main` field filename. If not defined, it defaults to `app`.
 
 ## Output by platform
 
@@ -94,40 +100,123 @@ npx node2exe
 
 ⚠️ **SEA (Single Executable Applications) only supports CommonJS modules** (`require`), not ES Modules (`import`).
 
-**Official documentation:** https://nodejs.org/api/single-executable-applications.html
+**However, with node2exe's automatic bundling, you can write in ES Modules!** Here's how:
 
-> "The single executable application feature currently only supports running a single embedded script using the CommonJS module system."
+### How it works:
 
-### ✅ Works (CommonJS)
+1. **You write ES Modules:**
 ```javascript
-const express = require('express');
-const fs = require('fs');
+import colors from 'colors';
+import https from 'https';
+
+console.log('Hello'.blue);
+```
+
+2. **esbuild automatically converts to CommonJS:**
+```javascript
+const colors = require('colors');
+const https = require('https');
+
+console.log('Hello'.blue);
+```
+
+3. **SEA runs the CommonJS version in the executable**
+
+### ✅ Using ES Modules (Recommended for new projects)
+
+**Don't forget to add `"type": "module"` to package.json:**
+
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js"
+}
+```
+
+**Your code:**
+```javascript
+import colors from 'colors';
+import https from 'https';
 
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 ```
 
-### ❌ Does NOT work (ES Modules)
+### ✅ Using CommonJS (Traditional)
+
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "main": "server.js"
+}
+```
+
+**Your code:**
 ```javascript
-import express from 'express';  // ❌ Not supported
-import fs from 'fs';             // ❌ Not supported
+const colors = require('colors');
+const https = require('https');
+
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
 ```
 
-### Why?
-Node.js SEA currently only supports the CommonJS module system. ES Module support (`import/export`) is not yet available in SEA due to technical limitations.
+### ⚠️ Limitations with ES Modules
 
-### Solution
-If your project uses ES Modules, you need to:
-1. Convert your code to CommonJS (`require`)
-2. Or use a bundler like `esbuild` to bundle your ES Modules into a single CommonJS file before building the executable
+Some advanced ES Module features may not work:
+- **Dynamic imports** - `import()` at runtime
+- **Top-level await** - `await` outside async function
+- **Circular dependencies** - complex import cycles
 
-Example with esbuild:
-```bash
-npx esbuild app.js --bundle --platform=node --outfile=bundle.js
-# Then update package.json main to "bundle.js"
-npx node2exe
+**Simple rule:** If your imports look straightforward, they'll work!
+
+**Official documentation:** https://nodejs.org/api/single-executable-applications.html
+
+> "The single executable application feature currently only supports running a single embedded script using the CommonJS module system."
+
+## Executable Naming
+
+The name of your executable is automatically determined by the `main` field in your `package.json`:
+
+### Example 1: With `main` defined
+```json
+{
+  "name": "my-project",
+  "main": "server.js",
+  "version": "1.0.0"
+}
 ```
+Running `npx node2exe` creates: **`server.exe`** (or `server` on macOS/Linux)
+
+### Example 2: Default behavior
+```json
+{
+  "name": "my-project",
+  "version": "1.0.0"
+}
+```
+Running `npx node2exe` creates: **`app.exe`** (default name, since `main` is not defined)
+
+### Example 3: With version flag
+```json
+{
+  "name": "my-project",
+  "main": "index.js",
+  "version": "2.5.0"
+}
+```
+Running `npx node2exe -V` creates: **`index-2.5.0.exe`**
+
+### How it works:
+- node2exe reads the `main` field from `package.json`
+- Extracts the filename without extension: `server.js` → `server`
+- Uses that as the executable name
+- If `main` is not defined, defaults to `app`
+- With `-V` flag, appends the version: `server-1.0.0.exe`
 
 ## Notes
 

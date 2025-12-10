@@ -29,7 +29,7 @@ if (!['win32', 'darwin', 'linux'].includes(platform)) {
     process.exit(1);
 }
 
-console.log(`ℹ Detected platform: ${platform === 'win32' ? 'Windows' : platform === 'darwin' ? 'macOS' : 'Linux'}\n`);
+console.log(`ℹ️ Detected platform: ${platform === 'win32' ? 'Windows' : platform === 'darwin' ? 'macOS' : 'Linux'}\n`);
 
 // Check package.json
 const packageJsonPath = path.join(projectDir, 'package.json');
@@ -59,12 +59,12 @@ console.log(`✓ Entry file found: ${entryFile}\n`);
 // Check if bundling is needed
 let finalEntryFile = entryFile;
 if (!skipBundle) {
-    console.log('[0/6] Checking for node_modules...');
+    console.log('Checking for node_modules...');
     const nodeModulesPath = path.join(projectDir, 'node_modules');
     if (fs.existsSync(nodeModulesPath)) {
         console.log('✓ node_modules found - will bundle dependencies\n');
         
-        console.log('[1/6] Bundling with esbuild...');
+        console.log('➡️ Bundling with esbuild...');
         const bundledFile = path.join(projectDir, '.node2exe-bundle.js');
         try {
             require.resolve('esbuild');
@@ -79,7 +79,7 @@ if (!skipBundle) {
         }
         
         try {
-            execSync(`npx esbuild ${entryFile} --bundle --platform=node --outfile=${bundledFile}`, {
+            execSync(`npx esbuild ${entryFile} --bundle --platform=node --format=cjs --outfile=${bundledFile}`, {
                 cwd: projectDir,
                 stdio: 'inherit'
             });
@@ -139,10 +139,8 @@ if (includeVersion && packageJson.version) {
 }
 const outputPath = path.join(projectDir, exeName);
 
-const stepOffset = skipBundle ? 1 : 2;
-
 // Step 1/2: Generate SEA blob
-console.log(`[${2}/6] Generating SEA blob...`);
+console.log(`➡️ Generating SEA blob...`);
 try {
     execSync(`node --experimental-sea-config sea-config.json`, { 
         cwd: projectDir,
@@ -155,7 +153,7 @@ try {
 }
 
 // Step 2/3: Copy Node binary
-console.log(`[${3}/6] Copying Node.js binary...`);
+console.log(`➡️ Copying Node.js binary...`);
 try {
     const nodePath = process.execPath;
     fs.copyFileSync(nodePath, outputPath);
@@ -168,7 +166,7 @@ try {
 
 // Step 3/4: Remove signature (macOS only)
 if (platform === 'darwin') {
-    console.log(`[${4}/6] Removing signature (macOS)...`);
+    console.log(`➡️ Removing signature (macOS)...`);
     try {
         execSync(`codesign --remove-signature ${exeName}`, { cwd: projectDir });
         console.log('✓ Signature removed\n');
@@ -177,11 +175,11 @@ if (platform === 'darwin') {
         console.log('  (continuing anyway)\n');
     }
 } else {
-    console.log(`[${4}/6] Signature step: Not applicable\n`);
+    console.log(`➡️ Signature step: Not applicable\n`);
 }
 
 // Step 4/5: Inject blob with postject
-console.log(`[${5}/6] Injecting SEA blob...`);
+console.log(`➡️ Injecting SEA blob...`);
 console.log('⏳ This may take 30-60 seconds, please wait...\n');
 try {
     let injectCmd;
@@ -202,7 +200,7 @@ try {
 
 // Step 5/6: Sign (macOS only) or cleanup
 if (platform === 'darwin') {
-    console.log(`[${6}/6] Signing binary (macOS)...`);
+    console.log(`➡️ Signing binary (macOS)...`);
     try {
         execSync(`codesign --sign - ${exeName}`, { cwd: projectDir });
         console.log('✓ Binary signed\n');
@@ -211,7 +209,7 @@ if (platform === 'darwin') {
         console.log('  (binary can still run)\n');
     }
 } else {
-    console.log(`[${6}/6] Cleanup...`);
+    console.log(`➡️ Cleanup...`);
     try {
         const blobPath = path.join(projectDir, 'sea-prep.blob');
         if (fs.existsSync(blobPath)) {

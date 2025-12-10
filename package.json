@@ -9,14 +9,18 @@
     "test": "echo \"No tests yet\""
   },
   "keywords": [
-    "node",
+  "node",
     "executable",
     "windows",
     "exe",
     "sea",
-    "single-executable"
-  ],
-  "author": "klicat",
+    "single-executable",
+    "macos",
+    "linux",
+    "bundler",
+    "esbuild"
+  ], 
+  "author": "Klicat SAS - France (https://klicat.com)",
   "license": "MIT",
   "repository": {
     "type": "git",
